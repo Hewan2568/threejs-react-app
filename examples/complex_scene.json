@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "name": "Complex Scene Example",
+    "createdAt": "2025-11-05T14:25:00+03:00",
+    "author": "3D Scene Editor",
+    "description": "A more complex scene demonstrating multiple objects and properties"
+  },
+  "scene": {
+    "background": "#e0e9f5",
+    "gridVisible": true,
+    "gridSize": 20,
+    "gridDivisions": 20,
+    "ambientLight": {
+      "color": "#404040",
+      "intensity": 0.5
+    },
+    "hemisphereLight": {
+      "skyColor": "#b1e1ff",
+      "groundColor": "#b97a20",
+      "intensity": 0.5
+    }
+  },
+  "camera": {
+    "position": [8, 5, 10],
+    "target": [0, 1, 0],
+    "fov": 50,
+    "near": 0.1,
+    "far": 1000
+  },
+  "objects": [
+    {
+      "id": "floor",
+      "type": "PlaneGeometry",
+      "name": "Floor",
+      "position": [0, 0, 0],
+      "rotation": [-Math.PI / 2, 0, 0],
+      "scale": [10, 10, 1],
+      "geometry": {
+        "width": 20,
+        "height": 20,
+        "widthSegments": 1,
+        "heightSegments": 1
+      },
+      "material": {
+        "type": "MeshStandardMaterial",
+        "color": "#808080",
+        "roughness": 0.8,
+        "metalness": 0.2
+      }
+    },
+    {
+      "id": "main-cube",
+      "type": "BoxGeometry",
+      "name": "Main Cube",
+      "position": [0, 1.5, 0],
+      "rotation": [0.3, 0.5, 0.1],
+      "scale": [1, 1, 1],
+      "geometry": {
+        "width": 2,
+        "height": 2,
+        "depth": 2,
+        "widthSegments": 1,
+        "heightSegments": 1,
+        "depthSegments": 1
+      },
+      "material": {
+        "type": "MeshStandardMaterial",
+        "color": "#4285f4",
+        "roughness": 0.3,
+        "metalness": 0.7,
+        "transparent": true,
+        "opacity": 0.9
+      }
+    },
+    {
+      "id": "sphere-1",
+      "type": "SphereGeometry",
+      "name": "Red Sphere",
+      "position": [3, 1, 2],
+      "rotation": [0, 0, 0],
+      "scale": [1, 1, 1],
+      "geometry": {
+        "radius": 1,
+        "widthSegments": 32,
+        "heightSegments": 32
+      },
+      "material": {
+        "type": "MeshStandardMaterial",
+        "color": "#ea4335",
+        "roughness": 0.2,
+        "metalness": 0.8
+      }
+    },
+    {
+      "id": "cylinder-1",
+      "type": "CylinderGeometry",
+      "name": "Green Cylinder",
+      "position": [-2, 1, -1],
+      "rotation": [0, 0, 0],
+      "scale": [1, 1, 1],
+      "geometry": {
+        "radiusTop": 0.8,
+        "radiusBottom": 0.8,
+        "height": 2,
+        "radialSegments": 32,
+        "heightSegments": 1
+      },
+      "material": {
+        "type": "MeshStandardMaterial",
+        "color": "#34a853",
+        "roughness": 0.5,
+        "metalness": 0.5
+      }
+    },
+    {
+      "id": "directional-light",
+      "type": "DirectionalLight",
+      "name": "Main Light",
+      "position": [5, 10, 7],
+      "target": [0, 0, 0],
+      "color": "#ffffff",
+      "intensity": 1,
+      "castShadow": true,
+      "shadow": {
+        "mapSize": {
+          "width": 2048,
+          "height": 2048
+        },
+        "camera": {
+          "near": 0.5,
+          "far": 50
+        }
+      }
+    }
+  ]
+}
