@@ -18,8 +18,7 @@ function App() {
   const handleCanvasReady = useCallback((manager) => {
     if (sceneManagerRef.current !== manager) {
       sceneManagerRef.current = manager;
-      // Get the scene reference from the manager if available
-      if (manager && manager.scene) {
+      if (manager?.scene) {
         sceneRef.current = manager.scene;
         setIsSceneReady(true);
       } else {
@@ -30,21 +29,17 @@ function App() {
   
   const handleSetSketchMode = useCallback((mode) => {
     setSketchMode(mode);
-    if (sceneManagerRef.current) {
-      sceneManagerRef.current.setSketchMode(mode);
-    }
+    sceneManagerRef.current?.setSketchMode(mode);
   }, []);
 
   const handleSceneImport = useCallback((importedScene) => {
     if (!sceneRef.current || !sceneManagerRef.current) return;
     
     try {
-      // Clear existing scene
       while (sceneRef.current.children.length > 0) { 
         const child = sceneRef.current.children[0];
         sceneRef.current.remove(child);
         
-        // Clean up geometry and materials to prevent memory leaks
         if (child.geometry) {
           child.geometry.dispose();
         }
@@ -57,18 +52,12 @@ function App() {
         }
       }
       
-      // Add all objects from the imported scene
       while (importedScene.children.length > 0) {
         const child = importedScene.children[0];
         sceneRef.current.add(child);
       }
       
-      // Update the scene manager's object map
-      if (sceneManagerRef.current.updateObjectMap) {
-        sceneManagerRef.current.updateObjectMap();
-      }
-      
-      // Clear selection after import
+      sceneManagerRef.current.updateObjectMap?.();
       setSelectedObject(null);
       
     } catch (error) {

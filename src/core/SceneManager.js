@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
-// Simple function to get TransformControls
 const getTransformControls = async () => {
   try {
     if (typeof TransformControls === 'function') {
       return TransformControls;
     }
-    
-    // If we're here, the import might have failed, try dynamic import
     const module = await import('three/examples/jsm/controls/TransformControls');
     return module.TransformControls || module.default;
   } catch (error) {
@@ -35,13 +32,12 @@ export default class SceneManager {
     this.renderer = renderer;
     this.domElement = domElement;
     
-    // Selection and highlighting
     this.edgeThreshold = 0.1;
     this.highlightedFace = null;
     this.highlightedEdge = null;
     this.defaultMaterial = null;
     this.selected = { type: null, id: null };
-    this.objects = new Map(); // id -> metadata
+    this.objects = new Map();
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.highlighted = null;
@@ -52,65 +48,51 @@ export default class SceneManager {
     });
     this.defaultMaterials = new WeakMap();
     
-    // Sketch mode properties
     this.sketchMode = SKETCH_MODES.NONE;
     this.sketchStartPoint = null;
     this.sketchPreview = null;
-    this.drawPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // XZ plane at y=0
-    this.gridSize = 0.5; // Size of grid for snap-to-grid
+    this.drawPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    this.gridSize = 0.5;
     
-    // Initialize transform controls
     this.transformControls = null;
     this.currentTransformMode = 'translate';
     
-    // Store the camera and domElement for later use
     this._camera = camera;
     this._domElement = domElement;
     
-    // Initialize sketch mode
     this.sketchMode = new SketchMode(this);
     
-    // Add keyboard event listeners
     this.onKeyDown = this.onKeyDown.bind(this);
     window.addEventListener('keydown', this.onKeyDown);
     
-    // Bind methods
     this.render = this.render.bind(this);
     this.dispose = this.dispose.bind(this);
     
-    // Setup transform controls in the next tick to ensure everything is ready
     this.initializeTransformControls();
   }
   
   async initializeTransformControls() {
     try {
-      // Wait for the next frame to ensure everything is ready
       await new Promise(resolve => requestAnimationFrame(resolve));
-      
-      // Try to set up transform controls
       const success = await this.setupTransformControls();
       
-      // If setup failed, retry after a delay
       if (!success) {
         console.warn('Retrying transform controls initialization...');
         setTimeout(() => this.initializeTransformControls(), 1000);
       }
     } catch (error) {
       console.error('Error in initializeTransformControls:', error);
-      // Retry after a delay
       setTimeout(() => this.initializeTransformControls(), 1000);
     }
   }
   
   async setupTransformControls() {
-    // Check for required dependencies
     if (!this.scene || !this._camera || !this._domElement) {
       console.warn('Scene, camera, or DOM element not available for TransformControls');
       return false;
     }
 
     try {
-      // Clean up existing controls
       if (this.transformControls) {
         this.scene.remove(this.transformControls);
         if (typeof this.transformControls.dispose === 'function') {
@@ -119,19 +101,14 @@ export default class SceneManager {
         this.transformControls = null;
       }
 
-      // Get TransformControls constructor
       const TC = await transformControlsPromise;
       if (!TC) {
         throw new Error('Failed to load TransformControls');
       }
 
-      // Create and configure new transform controls
       this.transformControls = new TC(this._camera, this._domElement);
-      
-      // Add to scene first (some versions of TransformControls need this)
       this.scene.add(this.transformControls);
       
-      // Configure transform controls
       if (typeof this.transformControls.setMode === 'function') {
         this.transformControls.setMode(this.currentTransformMode || 'translate');
       }
@@ -140,38 +117,31 @@ export default class SceneManager {
         this.transformControls.enabled = true;
       }
       
-      // Set up event listeners
       if (this.controls) {
         this.transformControls.addEventListener('dragging-changed', (event) => {
-          // Disable orbit controls when transforming
           if (this.controls) {
             this.controls.enabled = !event.value;
           }
         });
       }
       
-      // Add object change listener
       this.transformControls.addEventListener('objectChange', () => {
         if (this.transformControls?.object) {
           this.transformControls.object.updateMatrixWorld();
         }
       });
       
-      console.log('TransformControls initialized successfully');
       return true;
       
     } catch (error) {
       console.error('Error initializing TransformControls:', error);
-      // Retry after a delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       return this.setupTransformControls();
     }
   }
   
-  // Keyboard event handler
   onKeyDown(event) {
     if (!this.transformControls) {
-      // Try to initialize transform controls if they're not available
       this.setupTransformControls();
       if (!this.transformControls) return;
     }
@@ -187,13 +157,12 @@ export default class SceneManager {
         this.currentTransformMode = 'scale';
         break;
       default:
-        return; // Skip if not a transform mode key
+        return;
     }
     
     this.transformControls.setMode(this.currentTransformMode);
   }
   
-  // Object selection methods
   selectObject(object) {
     if (!object) {
       this.deselectObject();
