@@ -80,6 +80,23 @@ src/
 - Preview production build: `npm run preview`
 - Lint code: `npm run lint`
 
+## 🌐 Live Demo
+
+Check out the live demo of the 3D Scene Editor:
+[![Live Demo](https://img.shields.io/badge/demo-live%20demo-green.svg)](https://threejs-react-app.vercel.app/)
+
+## 🛠 Implementation Details
+
+### Core Technologies
+- **React**: For building the user interface and managing application state
+- **Three.js**: For 3D rendering and scene management
+- **Vite**: For fast development and production builds
+- **React Three Fiber**: React renderer for Three.js
+- **Drei**: Helper library for Three.js in React
+
+
+
+
 ## 📦 Dependencies
 
 - [React](https://reactjs.org/) - UI library
